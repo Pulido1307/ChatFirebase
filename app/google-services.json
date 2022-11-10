@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "280067156171",
+    "project_id": "chatfirebase-6d62e",
+    "storage_bucket": "chatfirebase-6d62e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:280067156171:android:c967ccd3a5535dc5e4934e",
+        "android_client_info": {
+          "package_name": "com.polar.industries.chatfirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "280067156171-2et5gmqldrr9mr462p53c1jb2gnijdq7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWYQTEMDdXDZ_dOm-WEkgf97AiRQcFLKE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "280067156171-2et5gmqldrr9mr462p53c1jb2gnijdq7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
