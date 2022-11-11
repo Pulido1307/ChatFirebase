@@ -1,6 +1,7 @@
 package com.polar.industries.chatfirebase
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,6 +43,7 @@ class ChatActivity : AppCompatActivity() {
         conversacionLista = arrayListOf()
 
 
+        Log.i("Polar", FirestoreHelper.polar!!)
         cifrado.setPublicKeyString(FirestoreHelper.polar)
 
 

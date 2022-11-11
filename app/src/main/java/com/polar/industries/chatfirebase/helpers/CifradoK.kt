@@ -1,12 +1,12 @@
 package com.polar.industries.chatfirebase.helpers
 
-import com.google.android.gms.common.util.Hex.stringToBytes
 import java.io.UnsupportedEncodingException
 import java.math.BigInteger
 import java.security.*
 import java.security.spec.InvalidKeySpecException
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
+import java.util.*
 import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
 import javax.crypto.IllegalBlockSizeException
@@ -74,6 +74,11 @@ class CifradoK {
         b2[0] = 1
         System.arraycopy(b, 0, b2, 1, b.size)
         return BigInteger(b2).toString(36)
+    }
+
+    fun stringToBytes(s: String?): ByteArray? {
+        val b2 = BigInteger(s, 36).toByteArray()
+        return Arrays.copyOfRange(b2, 1, b2.size)
     }
 
 }
