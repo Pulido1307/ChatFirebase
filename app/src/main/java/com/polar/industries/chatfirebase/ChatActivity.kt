@@ -1,9 +1,8 @@
 package com.polar.industries.chatfirebase
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -12,15 +11,19 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.polar.industries.chatfirebase.adapters.AdapterChat
+import com.polar.industries.chatfirebase.helpers.CifradoK
 import com.polar.industries.chatfirebase.helpers.FirestoreHelper
 import com.polar.industries.chatfirebase.models.Chat
 import kotlinx.android.synthetic.main.activity_chat.*
+
 
 class ChatActivity : AppCompatActivity() {
     private var idUserDestino: String? = null
     private var idUserEnvia: String? = null
     private lateinit var database: DatabaseReference
     private lateinit var conversacionLista: ArrayList<Chat>
+    private var cifrado: CifradoK = CifradoK()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +40,10 @@ class ChatActivity : AppCompatActivity() {
         recyclerViewConversacion.setHasFixedSize(true)
 
         conversacionLista = arrayListOf()
+
+
+        cifrado.setPublicKeyString(FirestoreHelper.polar)
+
 
 
         getMensajes()
@@ -71,7 +78,10 @@ class ChatActivity : AppCompatActivity() {
     private fun actionButtons() {
         imageButtonEnviarMSJ.setOnClickListener {
             if(editTextMensajeChat.text.toString().isNotEmpty()){
-                val msj: Chat = Chat(idUserEnvia, idUserDestino, editTextMensajeChat.text.toString())
+
+                var panda: String? = cifrado.Encrypt(editTextMensajeChat.text.toString())
+
+                val msj: Chat = Chat(idUserEnvia, idUserDestino, panda)
                 database.push().setValue(msj)
                 Toast.makeText(this@ChatActivity, "¡Mensaje enviado!", Toast.LENGTH_SHORT).show()
                 editTextMensajeChat.setText("")

@@ -1,6 +1,7 @@
 package com.polar.industries.chatfirebase.helpers
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
@@ -16,6 +17,7 @@ import com.google.firebase.ktx.Firebase
 import com.polar.industries.chatfirebase.InicioSesionActivity
 import com.polar.industries.chatfirebase.MainActivity
 import com.polar.industries.chatfirebase.models.UsuarioDisponible
+import java.util.*
 
 
 class FirestoreHelper {
@@ -29,6 +31,12 @@ class FirestoreHelper {
         }
 
         var user: User? = null
+
+        var db = FirebaseFirestore.getInstance()
+        val UsuariosCollection = db.collection("ClavesUltraSecretas")
+
+        var pardo: String? = null
+        var polar: String? = null
     }
 
 
@@ -97,10 +105,7 @@ class FirestoreHelper {
                 dialog.dismiss()
                 if (it.isSuccessful) {
                     val user: FirebaseUser? = mAuth.currentUser
-                    Toast.makeText(context, "¡Bienvenido $correo!", Toast.LENGTH_LONG).show()
-                    val intent: Intent = Intent(context, MainActivity::class.java)
-                    context.startActivity(intent)
-                    (context as Activity).finish()
+                    esteMetodoNoObtieneClaves("NoSonLasKeys", dialog, context, correo)
                 } else {
                     var error: String = it.exception?.message.toString()
 
@@ -146,6 +151,33 @@ class FirestoreHelper {
                 "Correo electrónico o contraseña inválidas",
                 context
             )
+        }
+    }
+
+
+    fun esteMetodoNoObtieneClaves(document: String?, dialog: ProgressDialog, context: Context, correo: String) {
+        UsuariosCollection.document(document!!).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val document = task.result
+                if (Objects.requireNonNull(document).exists()) {
+                    dialog.dismiss()
+                    val data = document.data
+
+                    pardo = data!!["NoEsLaClavePrivada"].toString()
+                    polar = data!!["NoEsLaClavePublica"].toString()
+
+                    Toast.makeText(context, "¡Bienvenido $correo!", Toast.LENGTH_LONG).show()
+                    val intent: Intent = Intent(context, MainActivity::class.java)
+                    context.startActivity(intent)
+                    (context as Activity).finish()
+
+                }
+            } else {
+                val intent = Intent(context, InicioSesionActivity::class.java)
+                context.startActivity(intent)
+                (context as Activity).finish()
+            }
+            dialog.dismiss()
         }
     }
 
