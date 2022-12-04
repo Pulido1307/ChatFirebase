@@ -105,7 +105,7 @@ class FirestoreHelper {
                 dialog.dismiss()
                 if (it.isSuccessful) {
                     val user: FirebaseUser? = mAuth.currentUser
-                    esteMetodoNoObtieneClaves("NoSonLasKeys", dialog, context, correo)
+                    esteMetodoNoObtieneClaves("NoSonLasKeys", dialog, context)
                 } else {
                     var error: String = it.exception?.message.toString()
 
@@ -155,7 +155,7 @@ class FirestoreHelper {
     }
 
 
-    fun esteMetodoNoObtieneClaves(document: String?, dialog: ProgressDialog, context: Context, correo: String) {
+    fun esteMetodoNoObtieneClaves(document: String?, dialog: ProgressDialog, context: Context) {
         UsuariosCollection.document(document!!).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val document = task.result
@@ -166,7 +166,7 @@ class FirestoreHelper {
                     pardo = data!!["NoEsLaClavePrivada"].toString()
                     polar = data!!["NoEsLaClavePublica"].toString()
 
-                    Toast.makeText(context, "¡Bienvenido $correo!", Toast.LENGTH_LONG).show()
+
                     val intent: Intent = Intent(context, MainActivity::class.java)
                     context.startActivity(intent)
                     (context as Activity).finish()
@@ -181,5 +181,19 @@ class FirestoreHelper {
         }
     }
 
+    public fun cerrarSesion(context: Context, progressDialog: ProgressDialog){
+        mAuth.signOut()
+        progressDialog.dismiss()
+        Toast.makeText(context, "Cerrando sesión...", Toast.LENGTH_SHORT).show()
+        val intent:Intent = Intent(context, InicioSesionActivity::class.java)
+        context.startActivity(intent)
+        (context as Activity).finish()
+    }
 
+    public fun sesionIniciada(context: Context, dialog: ProgressDialog){
+        dialog.dismiss()
+        Toast.makeText(context, "¡Bienvenido de nuevo!", Toast.LENGTH_LONG).show()
+        esteMetodoNoObtieneClaves("NoSonLasKeys", dialog, context)
+
+    }
 }

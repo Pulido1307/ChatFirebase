@@ -12,7 +12,6 @@ import javax.crypto.Cipher
 import javax.crypto.IllegalBlockSizeException
 import javax.crypto.NoSuchPaddingException
 
-
 class CifradoK {
     var PrivateKey: PrivateKey? = null
     var PublicKey: PublicKey? = null
@@ -36,16 +35,7 @@ class CifradoK {
         PublicKey = publicKey
     }
 
-    @Throws(
-        NoSuchAlgorithmException::class,
-        NoSuchPaddingException::class,
-        InvalidKeyException::class,
-        IllegalBlockSizeException::class,
-        BadPaddingException::class,
-        InvalidKeySpecException::class,
-        UnsupportedEncodingException::class,
-        NoSuchProviderException::class
-    )
+    @Throws(NoSuchAlgorithmException::class, NoSuchPaddingException::class, InvalidKeyException::class, IllegalBlockSizeException::class, BadPaddingException::class, InvalidKeySpecException::class, UnsupportedEncodingException::class, NoSuchProviderException::class)
     fun Encrypt(plain: String): String? {
         val encryptedBytes: ByteArray
         val cipher: Cipher = Cipher.getInstance("RSA")

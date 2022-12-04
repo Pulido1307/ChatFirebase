@@ -42,11 +42,7 @@ class ChatActivity : AppCompatActivity() {
 
         conversacionLista = arrayListOf()
 
-
-        Log.i("Polar", FirestoreHelper.polar!!)
         cifrado.setPublicKeyString(FirestoreHelper.polar)
-
-
 
         getMensajes()
 

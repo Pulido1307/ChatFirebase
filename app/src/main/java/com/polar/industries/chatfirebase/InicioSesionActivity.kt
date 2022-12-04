@@ -4,6 +4,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
 import com.polar.industries.chatfirebase.helpers.FirestoreHelper
 import kotlinx.android.synthetic.main.activity_inicio_sesion.*
 
@@ -16,6 +17,7 @@ class InicioSesionActivity : AppCompatActivity() {
         supportActionBar!!.hide()
 
         actionButtons()
+        verificarSesion()
     }
 
     private fun actionButtons() {
@@ -31,4 +33,20 @@ class InicioSesionActivity : AppCompatActivity() {
             fbHelper.inciarSesion(txtCorreoL.editText?.text.toString(), txtPassL.editText?.text.toString(), this@InicioSesionActivity,progressDialog)
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+    }
+
+    private fun verificarSesion(){
+        if(FirestoreHelper.mAuth.currentUser != null){
+            val progressDialog = ProgressDialog(this@InicioSesionActivity)
+            progressDialog.setMessage("Inciando Sesión ...")
+            progressDialog.show()
+            fbHelper.sesionIniciada(this@InicioSesionActivity, progressDialog)
+        }
+    }
+
+
 }
+
