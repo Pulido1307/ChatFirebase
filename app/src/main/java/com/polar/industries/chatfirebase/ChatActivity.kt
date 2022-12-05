@@ -11,11 +11,21 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
 import com.polar.industries.chatfirebase.adapters.AdapterChat
 import com.polar.industries.chatfirebase.helpers.CifradoK
 import com.polar.industries.chatfirebase.helpers.FirestoreHelper
 import com.polar.industries.chatfirebase.models.Chat
 import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
 
 
 class ChatActivity : AppCompatActivity() {
@@ -82,7 +92,50 @@ class ChatActivity : AppCompatActivity() {
                 val msj: Chat = Chat(idUserEnvia, idUserDestino, panda)
                 database.push().setValue(msj)
                 Toast.makeText(this@ChatActivity, "¡Mensaje enviado!", Toast.LENGTH_SHORT).show()
+
+                val json = JSONObject()
+                json.put("message", editTextMensajeChat.text.toString())
+                sendDataMqtt(json.toString())
+
                 editTextMensajeChat.setText("")
+            }
+        }
+    }
+
+    fun sendDataMqtt(jsonString:String) {
+
+        GlobalScope.launch {
+            Dispatchers.IO
+            val url = URL("https://webserviceexamplesmq.000webhostapp.com/Mqtt/SendDataMqtt.php")
+
+            val httpURLConnection = url.openConnection() as HttpURLConnection
+            httpURLConnection.requestMethod = "POST"
+            httpURLConnection.setRequestProperty("Content-Type", "application/json")
+            httpURLConnection.setRequestProperty("Accept", "application/json")
+            httpURLConnection.doInput = true
+            httpURLConnection.doOutput = true
+
+            val outputStreamWritter = OutputStreamWriter(httpURLConnection.outputStream)
+            outputStreamWritter.write(jsonString)
+            outputStreamWritter.flush()
+
+            val responseCode = httpURLConnection.responseCode
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                val response = httpURLConnection.inputStream.bufferedReader().use { it.readLine() }
+                withContext(Dispatchers.Main) {
+                    val gson = GsonBuilder().setPrettyPrinting().create()
+                    val gsonAux = gson.toJson(JsonParser.parseString(response))
+                    Log.e("gsonAux", gsonAux)
+
+                    if (gsonAux.contains("1")) {
+                        Toast.makeText(this@ChatActivity, "Se envío con exito al MQTT", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@ChatActivity, "No se envío al MQTT", Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+            }else{
+                Log.e("HTTP ERROR DE CONEXIÓN", "")
             }
         }
     }

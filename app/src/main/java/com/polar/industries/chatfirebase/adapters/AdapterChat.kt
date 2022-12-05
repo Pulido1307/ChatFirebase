@@ -51,11 +51,7 @@ class AdapterChat(private val context: Context, private val chatList: ArrayList<
         holder.textViewMensajeItem.text = zacek
 
         //Envio de mensaje a Alexa
-        if(position == chatList.size-1){
-            val json = JSONObject()
-            json.put("message", zacek)
-            sendDataMqtt(json.toString())
-        }
+        //if(position == chatList.size-1){}
     }
 
     override fun getItemCount(): Int {
@@ -74,43 +70,5 @@ class AdapterChat(private val context: Context, private val chatList: ArrayList<
 
     inner class chatHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val textViewMensajeItem: TextView = itemView.findViewById(R.id.textViewMensajeItem)
-    }
-
-    fun sendDataMqtt(jsonString:String) {
-
-        GlobalScope.launch {
-            Dispatchers.IO
-            val url = URL("https://webserviceexamplesmq.000webhostapp.com/Mqtt/SendDataMqtt.php")
-
-            val httpURLConnection = url.openConnection() as HttpURLConnection
-            httpURLConnection.requestMethod = "POST"
-            httpURLConnection.setRequestProperty("Content-Type", "application/json")
-            httpURLConnection.setRequestProperty("Accept", "application/json")
-            httpURLConnection.doInput = true
-            httpURLConnection.doOutput = true
-
-            val outputStreamWritter = OutputStreamWriter(httpURLConnection.outputStream)
-            outputStreamWritter.write(jsonString)
-            outputStreamWritter.flush()
-
-            val responseCode = httpURLConnection.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                val response = httpURLConnection.inputStream.bufferedReader().use { it.readLine() }
-                withContext(Dispatchers.Main) {
-                    val gson = GsonBuilder().setPrettyPrinting().create()
-                    val gsonAux = gson.toJson(JsonParser.parseString(response))
-                    Log.e("gsonAux", gsonAux)
-
-                    if (gsonAux.contains("1")) {
-                        Toast.makeText(context, "Se envío con exito al MQTT", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "No se envío al MQTT", Toast.LENGTH_SHORT).show()
-                    }
-
-                }
-            }else{
-                Log.e("HTTP ERROR DE CONEXIÓN", "")
-            }
-        }
     }
 }
