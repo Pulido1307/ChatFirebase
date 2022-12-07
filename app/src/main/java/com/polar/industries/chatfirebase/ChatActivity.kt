@@ -123,16 +123,20 @@ class ChatActivity : AppCompatActivity() {
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 val response = httpURLConnection.inputStream.bufferedReader().use { it.readLine() }
                 withContext(Dispatchers.Main) {
-                    val gson = GsonBuilder().setPrettyPrinting().create()
-                    val gsonAux = gson.toJson(JsonParser.parseString(response))
-                    Log.e("gsonAux", gsonAux)
+                    try {
+                        val gson = GsonBuilder().setPrettyPrinting().create()
+                        val gsonAux = gson.toJson(JsonParser.parseString(response))
+                        Log.e("gsonAux", gsonAux)
 
-                    if (gsonAux.contains("1")) {
-                        Toast.makeText(this@ChatActivity, "Se envío con exito al MQTT", Toast.LENGTH_SHORT).show()
-                    } else {
+                        if (gsonAux.contains("1")) {
+                            Toast.makeText(this@ChatActivity, "Se envío con exito al MQTT", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this@ChatActivity, "No se envío al MQTT", Toast.LENGTH_SHORT).show()
+                        }
+                    }catch (e:Exception){
+                        Log.e("error", e.toString())
                         Toast.makeText(this@ChatActivity, "No se envío al MQTT", Toast.LENGTH_SHORT).show()
                     }
-
                 }
             }else{
                 Log.e("HTTP ERROR DE CONEXIÓN", "")
